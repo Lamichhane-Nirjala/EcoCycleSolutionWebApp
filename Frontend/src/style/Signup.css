@@ -1,0 +1,92 @@
+/* FULL PAGE */
+.signup-page {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(20,83,45,0.75), rgba(20,83,45,0.75)),
+    url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1920")
+    center / cover no-repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* GLASS FORM */
+.signup-glass {
+  width: 420px;
+  padding: 36px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+  cursor: default;
+}
+
+.signup-glass h2 {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 22px;
+}
+
+/* INPUTS */
+.signup-glass input,
+.signup-glass select {
+  width: 100%;
+  padding: 13px 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.signup-glass input:focus,
+.signup-glass select:focus {
+  border-color: #16a34a;
+}
+
+/* PASSWORD HINT */
+.password-hint {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* ERROR */
+.error {
+  font-size: 12px;
+  color: #dc2626;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* BUTTON */
+.primary-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  background: #16a34a;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* FOOTER */
+.auth-footer {
+  margin-top: 18px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.auth-footer a {
+  color: #16a34a;
+  font-weight: 600;
+  text-decoration: none;
+}

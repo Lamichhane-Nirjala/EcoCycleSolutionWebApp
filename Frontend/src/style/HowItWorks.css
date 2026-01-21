@@ -1,0 +1,93 @@
+.how-page {
+  min-height: 100vh;
+  padding: 100px 20px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* MAIN CONTAINER (MATCHES HOME STYLE) */
+.how-container {
+  max-width: 1000px;
+  margin: auto;
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+}
+
+.how-container h1 {
+  text-align: center;
+  font-size: 2.4rem;
+}
+
+.how-subtitle {
+  text-align: center;
+  margin: 12px 0 40px;
+  color: #444;
+}
+
+/* STEPS */
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.how-step {
+  background: #f0fdf4;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.how-step span {
+  font-size: 1.8rem;
+}
+
+.how-step h4 {
+  margin: 10px 0 6px;
+  color: #14532d;
+}
+
+.how-step p {
+  font-size: 0.85rem;
+  color: #065f46;
+}
+
+/* HIGHLIGHT STEP */
+.how-step.highlight {
+  background: #22c55e;
+  color: white;
+}
+
+.how-step.highlight h4,
+.how-step.highlight p {
+  color: white;
+}
+
+/* EXTRA INFO */
+.how-extra {
+  margin-top: 45px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.extra-box {
+  background: #ecfdf5;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #065f46;
+  text-align: center;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .how-container {
+    padding: 30px 20px;
+  }
+
+  .how-container h1 {
+    font-size: 2rem;
+  }
+}
