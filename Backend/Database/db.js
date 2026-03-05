@@ -31,4 +31,4 @@ const connection = async () => {
   }
 };
 
-export { sequelize, connection };
+export { sequelize, Sequelize, connection };
