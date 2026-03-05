@@ -2,14 +2,22 @@ import express from "express";
 import cors from "cors";
 
 import { createUploadsFolder } from "./security/helper.js";
-import userRouter from "./Router/userRouter.js";
 import { connection } from "./Database/db.js";
+
+import userRouter from "./Router/userRouter.js";
+import pickupRouter from "./Router/pickupRouter.js";
+import adminRouter from "./Router/adminRouter.js";
+import dashboardRouter from "./Router/dashboardRouter.js";
+import activityRouter from "./Router/activityRouter.js";
+
+import { errorHandler, notFoundHandler } from "./Middleware/errorHandler.js";
 
 const app = express();
 const PORT = 5000;
 
-// Middleware
+// Middleware - MUST BE BEFORE ROUTES
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
@@ -17,36 +25,55 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:5175",
+      "http://localhost:5176",
+      "http://localhost:5177",
+      "http://localhost:5178",
     ],
     credentials: true,
   })
 );
 
-// Routes
-app.use("/auth", userRouter);
+// HEALTH CHECK - NO DB NEEDED
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    status: "Server is running ✅",
+    timestamp: new Date(),
+  });
+});
 
-// Startup function (CRITICAL FIX)
+// ROUTES
+app.use("/api/auth", userRouter);
+app.use("/api/pickup", pickupRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/dashboard", dashboardRouter);
+app.use("/api/activity", activityRouter);
+
+// 404 Handler - MUST BE BEFORE ERROR HANDLER
+app.use(notFoundHandler);
+
+// Error Handler - MUST BE LAST
+app.use(errorHandler);
+
+// Start server
 const startServer = async () => {
   try {
-    await connection(); // ✅ WAIT for DB
+    console.log("🔄 Connecting to database...");
+    await connection();
+    console.log("✅ Database connected");
+    
     createUploadsFolder();
+    console.log("✅ Uploads folder created");
 
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📝 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🔓 Login endpoint: POST http://localhost:${PORT}/api/auth/login`);
     });
   } catch (error) {
-    console.error("❌ Server failed to start:", error);
+    console.error("❌ Server failed to start:", error.message);
     process.exit(1);
   }
 };
 
 startServer();
-
-// 🔥 Global crash protection (MANDATORY)
-process.on("unhandledRejection", (err) => {
-  console.error("Unhandled Rejection:", err);
-});
-
-process.on("uncaughtException", (err) => {
-  console.error("Uncaught Exception:", err);
-});
