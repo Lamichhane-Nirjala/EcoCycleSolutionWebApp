@@ -1,0 +1,167 @@
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Variants */
+.btn-primary {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(74, 222, 128, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #4ade80;
+  border: 2px solid #4ade80;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f0fdf4;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #4ade80;
+  border: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: #f0fdf4;
+}
+
+/* Sizes */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn-md {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.btn-lg {
+  padding: 14px 28px;
+  font-size: 16px;
+}
+
+.btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Loader animation */
+.btn-loader {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .btn-sm {
+    padding: 8px 12px;
+    font-size: 11px;
+    min-height: 40px;
+  }
+
+  .btn-md {
+    padding: 12px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .btn-lg {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+
+  .btn-full {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .btn-lg {
+    padding: 12px 24px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .btn-lg {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+}
