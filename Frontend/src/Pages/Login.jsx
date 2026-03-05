@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import "../style/login.css";
 import api from "../../api/axios";
 
@@ -14,10 +15,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -26,14 +24,30 @@ function Login() {
     try {
       setLoading(true);
 
+      // ✅ FIXED ROUTE
       const res = await api.post("/auth/login", form);
-      alert(res.data.message);
+
+      // ✅ Save token correctly
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      
+      // ✅ Set admin flag based on user type
+      if (res.data.user.usertype === "Admin") {
+        localStorage.setItem("isAdmin", "true");
+      } else {
+        localStorage.setItem("isAdmin", "false");
+      }
 
-      navigate("/dashboard");
+      toast.success(res.data.message || "Login successful!");
+      
+      // ✅ Check user role and redirect accordingly
+      if (res.data.user.usertype === "Admin") {
+        setTimeout(() => navigate("/admin-dashboard"), 600);
+      } else {
+        setTimeout(() => navigate("/dashboard"), 600);
+      }
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -47,7 +61,7 @@ function Login() {
 
   return (
     <div className="auth-page" onClick={handleBackgroundClick}>
-      <div className="auth-card">
+      <div className="auth-card floating-card">
         <h1>Welcome Back 👋</h1>
         <p>Login to continue recycling with EcoCycle</p>
 
@@ -76,7 +90,7 @@ function Login() {
         </form>
 
         <p className="auth-footer">
-          Don't have an account? <Link to="/signup">Sign up</Link>
+          Don’t have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>
