@@ -49,7 +49,8 @@ const Signup = () => {
 
     let newErrors = {};
 
-    Object.keys(form).forEach((key) => {
+    const requiredFields = ["name", "email", "password", "confirmPassword", "userType"];
+    requiredFields.forEach((key) => {
       if (!form[key]) newErrors[key] = "This field is required";
     });
 
@@ -81,14 +82,23 @@ const Signup = () => {
 
   const createUser = async () => {
     try {
+      // Always create as regular User (not Admin)
       const res = await api.post("/auth/create", {
         name: form.name,
         email: form.email,
         password: form.password,
         phone: form.phone,
         city: form.city,
-        userType: form.userType,
+        userType: "User", // Force user type to User
       });
+
+      // Save token and user info to localStorage (CRITICAL FIX)
+      if (res.data.token && res.data.user) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("isAdmin", "false"); // Regular user, not admin
+      }
+
       alert(res.data.message);
       navigate("/dashboard");
     } catch (err) {
