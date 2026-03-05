@@ -55,6 +55,14 @@ async function createTables() {
   try {
     // Drop existing table if it exists (to fix schema mismatch)
     await client.query(`
+      DROP TABLE IF EXISTS reviews CASCADE
+    `);
+
+    await client.query(`
+      DROP TABLE IF EXISTS notifications CASCADE
+    `);
+
+    await client.query(`
       DROP TABLE IF EXISTS pickups CASCADE
     `);
 
@@ -100,6 +108,38 @@ async function createTables() {
       )
     `);
 
+    // Create reviews table
+    await client.query(`
+      CREATE TABLE reviews (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "pickupId" UUID NOT NULL REFERENCES pickups("pickupId") ON DELETE CASCADE,
+        "reviewerId" INTEGER NOT NULL REFERENCES users(id),
+        "driverId" INTEGER REFERENCES users(id),
+        rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        comment TEXT,
+        "reviewType" VARCHAR(20) NOT NULL DEFAULT 'service' CHECK ("reviewType" IN ('driver', 'service', 'both')),
+        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create notifications table
+    await client.query(`
+      CREATE TABLE notifications (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "userId" INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(50) NOT NULL CHECK (type IN ('pickup_requested', 'pickup_assigned', 'pickup_in_progress', 'pickup_completed', 'pickup_cancelled', 'new_reward', 'leaderboard_update', 'system_message')),
+        title VARCHAR(100) NOT NULL,
+        message TEXT NOT NULL,
+        "relatedId" VARCHAR(100),
+        "relatedType" VARCHAR(50),
+        "isRead" BOOLEAN DEFAULT false,
+        icon VARCHAR(50),
+        "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Create indexes for better performance
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)
@@ -115,6 +155,26 @@ async function createTables() {
 
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_pickups_driverId ON pickups("driverId")
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_reviews_pickupId ON reviews("pickupId")
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_reviews_reviewerId ON reviews("reviewerId")
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_reviews_driverId ON reviews("driverId")
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_notifications_userId ON notifications("userId")
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_notifications_isRead ON notifications("isRead")
     `);
 
     console.log("Database initialization completed successfully");

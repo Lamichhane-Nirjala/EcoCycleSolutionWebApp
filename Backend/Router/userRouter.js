@@ -7,6 +7,8 @@ import {
   getUserbyid,
   updateUser,
   deleteUser,
+  forgotPassword,
+  resetPassword,
 } from "../Controller/userController.js";
 
 import verifyToken from "../Middleware/auth.js";
@@ -34,5 +36,11 @@ router.put("/:id", verifyToken, validateUpdateUser, updateUser);
 
 // DELETE USER (protected)
 router.delete("/:id", verifyToken, deleteUser);
+
+// FORGOT PASSWORD
+router.post("/forgot-password", forgotPassword);
+
+// RESET PASSWORD
+router.post("/reset-password", resetPassword);
 
 export default router;

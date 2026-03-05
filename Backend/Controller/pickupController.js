@@ -157,6 +157,8 @@ export const cancelPickup = async (req, res) => {
 export const getAllPickups = async (req, res) => {
   try {
     const { status, limit = 50, offset = 0 } = req.query;
+    const limitNum = Math.min(parseInt(limit) || 50, 1000);
+    const offsetNum = parseInt(offset) || 0;
 
     let whereClause = {};
     if (status) {
@@ -173,17 +175,17 @@ export const getAllPickups = async (req, res) => {
         },
       ],
       order: [["requestedAt", "DESC"]],
-      limit: parseInt(limit),
-      offset: parseInt(offset),
+      limit: limitNum,
+      offset: offsetNum,
     });
 
     res.status(200).json({
       success: true,
       message: "Pickups fetched successfully",
-      data: pickups.rows,
+      data: pickups.rows || [],
       total: pickups.count,
-      limit: parseInt(limit),
-      offset: parseInt(offset),
+      limit: limitNum,
+      offset: offsetNum,
     });
   } catch (error) {
     console.error("Get all pickups error:", error);
@@ -347,11 +349,13 @@ export const getPickupStats = async (req, res) => {
       message: "Pickup stats fetched successfully",
       data: {
         total,
-        completed,
-        pending,
-        assigned,
-        inProgress,
-        cancelled,
+        pickupsByStatus: {
+          Pending: pending,
+          Assigned: assigned,
+          "In Progress": inProgress,
+          Completed: completed,
+          Cancelled: cancelled,
+        },
         totalWaste: parseFloat(totalWaste?.total || 0),
       },
     });

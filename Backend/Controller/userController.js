@@ -5,6 +5,7 @@ import { logActivity } from "./activityController.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 const JWT_EXPIRE = "7d";
+const RESET_TOKEN_EXPIRE = "1h";
 
 // REGISTER USER
 export const registerUser = async (req, res) => {
@@ -275,6 +276,127 @@ export const getLoggedInUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch user",
+      error: error.message,
+    });
+  }
+};
+
+// FORGOT PASSWORD - Send password reset token
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found with this email",
+      });
+    }
+
+    // Generate reset token
+    const resetToken = jwt.sign({ email, id: user.id }, JWT_SECRET, {
+      expiresIn: RESET_TOKEN_EXPIRE,
+    });
+
+    // Log activity
+    await logActivity(user.id, "forgot_password", `Password reset requested for ${email}`, null, null, {
+      email: user.email,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset token sent successfully",
+      token: resetToken,
+      email: user.email,
+      note: "In production, this token would be sent via email. For testing, use the token provided here.",
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to process forgot password request",
+      error: error.message,
+    });
+  }
+};
+
+// RESET PASSWORD - Verify token and update password
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword, confirmPassword } = req.body;
+
+    if (!token || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Token and passwords are required",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+
+    // Find user and update password
+    const user = await User.findOne({ where: { email: decoded.email } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await user.update({ password: hashedPassword });
+
+    // Log activity
+    await logActivity(user.id, "password_reset", `Password reset successful for ${user.email}`, null, null, {
+      email: user.email,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.username,
+      },
+    });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to reset password",
       error: error.message,
     });
   }
