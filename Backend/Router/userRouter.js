@@ -1,23 +1,38 @@
-import express from "express";import { deleteUser, getalluser, getUserbyid, registerUser, updateUser, loginUser } from "../Controller/userController.js";
+import express from "express";
+import {
+  registerUser,
+  loginUser,
+  getLoggedInUser,
+  getalluser,
+  getUserbyid,
+  updateUser,
+  deleteUser,
+} from "../Controller/userController.js";
 
+import verifyToken from "../Middleware/auth.js";
+import { validateRegister, validateLogin, validateUpdateUser } from "../Middleware/validation.js";
 
 const router = express.Router();
 
-//CREATE USER 
-router.post("/create", registerUser);
+// REGISTER USER
+router.post("/create", validateRegister, registerUser);
 
-router.post("/login", loginUser);
+// LOGIN USER
+router.post("/login", validateLogin, loginUser);
 
+// DASHBOARD USER (Get current user info)
+router.get("/me", verifyToken, getLoggedInUser);
 
-//GET ALL USERS 
-router.get("/all", getalluser);
+// GET ALL USERS (protected)
+router.get("/all", verifyToken, getalluser);
 
-// GET USER BY ID 
-router.get("/:id",getUserbyid );
+// GET USER BY ID (protected)
+router.get("/:id", verifyToken, getUserbyid);
 
-// UPDATE USER
-router.put("/:id",updateUser); 
+// UPDATE USER (protected)
+router.put("/:id", verifyToken, validateUpdateUser, updateUser);
 
-//DELETE USER
-router.delete("/:id", deleteUser);
+// DELETE USER (protected)
+router.delete("/:id", verifyToken, deleteUser);
+
 export default router;
