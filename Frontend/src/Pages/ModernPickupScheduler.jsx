@@ -16,8 +16,6 @@ export default function ModernPickupScheduler() {
     estimatedWeight: "",
     pickupAddress: "",
     scheduledTime: "",
-    latitude: "",
-    longitude: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -80,8 +78,6 @@ export default function ModernPickupScheduler() {
         wasteType: formData.wasteType,
         estimatedWeight: parseFloat(formData.estimatedWeight),
         pickupAddress: formData.pickupAddress,
-        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
         scheduledTime: formData.scheduledTime ? new Date(formData.scheduledTime).toISOString() : null,
       });
 
@@ -94,8 +90,6 @@ export default function ModernPickupScheduler() {
           estimatedWeight: "",
           pickupAddress: "",
           scheduledTime: "",
-          latitude: "",
-          longitude: "",
         });
       } else {
         toast.error(response.data.message || "Failed to create pickup request");
@@ -110,11 +104,13 @@ export default function ModernPickupScheduler() {
 
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   const handleLogout = () => {
@@ -128,7 +124,7 @@ export default function ModernPickupScheduler() {
 
       <main className="main-content">
         <Header
-          title="Schedule Waste Pickup 🚚"
+          title="Schedule Waste Pickup"
           subtitle="Request a convenient waste pickup at your location"
         />
 
@@ -167,26 +163,7 @@ export default function ModernPickupScheduler() {
                     required
                   />
 
-                  <div className="coordinates">
-                    <Input
-                      label="Latitude"
-                      name="latitude"
-                      type="number"
-                      placeholder="e.g., 40.7128"
-                      value={formData.latitude}
-                      onChange={handleChange}
-                      step="0.0001"
-                    />
-                    <Input
-                      label="Longitude"
-                      name="longitude"
-                      type="number"
-                      placeholder="e.g., -74.0060"
-                      value={formData.longitude}
-                      onChange={handleChange}
-                      step="0.0001"
-                    />
-                  </div>
+
 
                   <Input
                     label="Scheduled Time (Optional)"
@@ -233,10 +210,10 @@ export default function ModernPickupScheduler() {
 
               <Card title="Tips & Info" className="info-card">
                 <ul className="tips-list">
-                  <li>📍 Accurate location helps drivers find you faster</li>
-                  <li>⏰ Schedule pickup during business hours for faster service</li>
-                  <li>♻️ Segregate waste for better recycling</li>
-                  <li>⭐ Earn more eco-points with each pickup</li>
+                  <li>Accurate location helps drivers find you faster</li>
+                  <li>Schedule pickup during business hours for faster service</li>
+                  <li>Segregate waste for better recycling</li>
+                  <li>Earn more eco-points with each pickup</li>
                 </ul>
               </Card>
             </div>
@@ -247,7 +224,7 @@ export default function ModernPickupScheduler() {
         <Modal
           isOpen={showSuccess}
           onClose={() => setShowSuccess(false)}
-          title="✅ Pickup Request Confirmed"
+          title="Pickup Request Confirmed"
           size="md"
           footer={
             <div style={{ display: "flex", gap: "12px" }}>

@@ -24,7 +24,7 @@ function AdminLogin() {
 
     try {
       setLoading(true);
-      console.log("🔐 Admin login attempt with email:", form.email);
+      console.log("Admin login attempt with email:", form.email);
 
       // Admin login using same endpoint but validates role
       const res = await api.post("/auth/login", form);
@@ -47,7 +47,7 @@ function AdminLogin() {
       localStorage.setItem("isAdmin", "true");
 
       console.log("✅ Admin login successful, redirecting to dashboard");
-      toast.success("Admin login successful! 🎉");
+      toast.success("Admin login successful!");
       setTimeout(() => navigate("/admin-dashboard"), 600);
     } catch (err) {
       console.error("❌ Admin login error:", err);
@@ -79,7 +79,7 @@ function AdminLogin() {
               <p>Manage Users</p>
             </div>
             <div className="feature-item">
-              <span className="feature-icon">📈</span>
+              <span className="feature-icon">A</span>
               <p>View Analytics</p>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { Modal } from "../components/Modal";
 import { Select, Input } from "../components/Form";
 import { LoadingPage } from "../components/Loader";
 import { toast } from "react-toastify";
+import api from "../../api/axios";
 import "../style/AdminDashboard.css";
 
 export default function AdminDashboard() {
@@ -28,32 +29,34 @@ export default function AdminDashboard() {
     { icon: "🚚", label: "Pickups", href: "/admin-pickups" },
     { icon: "👥", label: "Users", href: "/admin-users" },
     { icon: "📈", label: "Analytics", href: "/admin-analytics" },
-    { icon: "⚙️", label: "Settings", href: "/admin-settings" },
+    { icon: "🌍", label: "Impact", href: "/admin-impact" },
   ];
 
   useEffect(() => {
     fetchData();
+    
+    // Auto-refresh admin dashboard every 30 seconds for real-time updates
+    const refreshInterval = setInterval(fetchData, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchData = async () => {
     try {
+      setLoading(true);
+      
       const [pickupsRes, statsRes] = await Promise.all([
-        fetch("http://localhost:5000/api/pickup/admin/all?limit=50", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("http://localhost:5000/api/pickup/admin/stats", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        api.get("/pickup/admin/all?limit=50"),
+        api.get("/pickup/admin/stats"),
       ]);
 
-      const pickupsData = await pickupsRes.json();
-      const statsData = await statsRes.json();
-
-      if (pickupsData.success) setPickups(pickupsData.data);
-      if (statsData.success) setStats(statsData.data);
+      if (pickupsRes.data.success) setPickups(pickupsRes.data.data);
+      if (statsRes.data.success) setStats(statsRes.data.data);
+      
+      toast.success("Dashboard updated");
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to load data");
+      console.error("Error loading admin data:", error);
+      toast.error("Failed to load admin data");
     } finally {
       setLoading(false);
     }
@@ -68,29 +71,22 @@ export default function AdminDashboard() {
     setAssignLoading(true);
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/pickup/admin/assign/${selectedPickup.pickupId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ driverId: parseInt(driverId) }),
-        }
+      const response = await api.put(
+        `/pickup/admin/assign/${selectedPickup.pickupId}`,
+        { driverId: parseInt(driverId) }
       );
 
-      const data = await response.json();
-      if (data.success) {
+      if (response.data.success) {
         toast.success("Driver assigned successfully!");
         setShowAssignModal(false);
+        setDriverId("");
         fetchData();
       } else {
-        toast.error(data.message || "Failed to assign driver");
+        toast.error(response.data.message || "Failed to assign driver");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Error assigning driver");
+      console.error("Error assigning driver:", error);
+      toast.error(error.response?.data?.message || "Error assigning driver");
     } finally {
       setAssignLoading(false);
     }
@@ -103,32 +99,25 @@ export default function AdminDashboard() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/pickup/admin/status/${selectedPickup.pickupId}`,
+      const response = await api.put(
+        `/pickup/admin/status/${selectedPickup.pickupId}`,
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            status: newStatus,
-            notes: `Status updated to ${newStatus}`,
-          }),
+          status: newStatus,
+          notes: `Status updated to ${newStatus}`,
         }
       );
 
-      const data = await response.json();
-      if (data.success) {
+      if (response.data.success) {
         toast.success("Status updated successfully!");
         setShowStatusModal(false);
+        setNewStatus("");
         fetchData();
       } else {
-        toast.error(data.message || "Failed to update status");
+        toast.error(response.data.message || "Failed to update status");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Error updating status");
+      console.error("Error updating status:", error);
+      toast.error(error.response?.data?.message || "Error updating status");
     }
   };
 
@@ -191,39 +180,39 @@ export default function AdminDashboard() {
 
         <PageContainer>
           {/* Stats */}
-          {stats && (
+          {stats && stats.pickupsByStatus && (
             <div className="admin-stats">
               <AnalyticsCard
                 label="Total Pickups"
-                value={stats.totalPickups}
+                value={stats.totalPickups || 0}
                 unit="requests"
                 color="#4ade80"
                 icon="📦"
               />
               <AnalyticsCard
                 label="Pending"
-                value={stats.statusBreakdown.pending}
+                value={stats.pickupsByStatus["Pending"] || 0}
                 unit="requests"
                 color="#f59e0b"
                 icon="⏳"
               />
               <AnalyticsCard
                 label="Assigned"
-                value={stats.statusBreakdown.assigned}
+                value={stats.pickupsByStatus["Assigned"] || 0}
                 unit="drivers"
                 color="#06b6d4"
                 icon="🚚"
               />
               <AnalyticsCard
                 label="Completed"
-                value={stats.statusBreakdown.completed}
+                value={stats.pickupsByStatus["Completed"] || 0}
                 unit="requests"
                 color="#4ade80"
                 icon="✅"
               />
               <AnalyticsCard
                 label="Total Recycled"
-                value={stats.totalRecycledWeight.toFixed(1)}
+                value={(stats.totalWaste || 0).toFixed(1)}
                 unit="kg"
                 color="#8b5cf6"
                 icon="♻️"

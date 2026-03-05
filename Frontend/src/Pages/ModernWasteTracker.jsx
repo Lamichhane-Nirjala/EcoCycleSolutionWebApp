@@ -19,6 +19,11 @@ export default function ModernWasteTracker() {
 
   useEffect(() => {
     fetchPickups();
+    
+    // Auto-refresh waste tracker every 30 seconds for real-time updates
+    const refreshInterval = setInterval(fetchPickups, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchPickups = async () => {
@@ -54,11 +59,13 @@ export default function ModernWasteTracker() {
 
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   const handleLogout = () => {
@@ -113,7 +120,7 @@ export default function ModernWasteTracker() {
       <main className="main-content">
 
         <Header
-          title="Waste Tracker 📊"
+          title="Waste Tracker"
           subtitle="Monitor all your waste pickups and recycling history"
         />
 

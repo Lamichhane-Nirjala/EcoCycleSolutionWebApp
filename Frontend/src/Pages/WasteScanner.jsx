@@ -22,12 +22,14 @@ export default function WasteScanner() {
 
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "📱", label: "Waste Scanner", href: "/waste-scanner" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   const categories = [
@@ -149,7 +151,7 @@ export default function WasteScanner() {
 
       <main className="main-content">
         <Header
-          title="Waste Scanner 📱"
+          title="Waste Scanner"
           subtitle="Scan and catalog waste items in real-time"
         />
 

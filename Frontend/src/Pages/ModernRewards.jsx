@@ -17,6 +17,11 @@ export default function Rewards() {
 
   useEffect(() => {
     fetchUserPoints();
+    
+    // Auto-refresh rewards data every 30 seconds
+    const refreshInterval = setInterval(fetchUserPoints, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchUserPoints = async () => {
@@ -41,11 +46,13 @@ export default function Rewards() {
 
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   const rewards = [
@@ -62,7 +69,7 @@ export default function Rewards() {
       name: "Free Reusable Bag",
       description: "Premium eco-friendly shopping bag",
       points: 350,
-      icon: "🛍️",
+      icon: "Bag",
       category: "merchandise",
     },
     {
@@ -70,7 +77,7 @@ export default function Rewards() {
       name: "Tree Planting Certificate",
       description: "Plant a tree in your name",
       points: 500,
-      icon: "🌳",
+      icon: "Tree",
       category: "charity",
     },
     {
@@ -86,7 +93,7 @@ export default function Rewards() {
       name: "Eco-Kit Bundle",
       description: "Complete sustainability starter kit",
       points: 750,
-      icon: "📦",
+      icon: "Kit",
       category: "merchandise",
     },
     {
@@ -107,7 +114,7 @@ export default function Rewards() {
   const handleRedeem = () => {
     if (userPoints >= selectedReward.points) {
       setUserPoints(userPoints - selectedReward.points);
-      toast.success(`🎉 ${selectedReward.name} redeemed successfully!`);
+      toast.success(`${selectedReward.name} redeemed successfully!`);
       setShowRedeemModal(false);
     } else {
       toast.error("Insufficient eco points");
@@ -116,7 +123,7 @@ export default function Rewards() {
 
   const categoryEmoji = {
     discount: "💰",
-    merchandise: "🛍️",
+    merchandise: "🛍",
     charity: "❤️",
     learning: "📖",
   };
@@ -127,7 +134,7 @@ export default function Rewards() {
 
       <main className="main-content">
         <Header
-          title="Eco Rewards 🎁"
+          title="Eco Rewards"
           subtitle="Redeem your eco points for amazing rewards"
         />
 

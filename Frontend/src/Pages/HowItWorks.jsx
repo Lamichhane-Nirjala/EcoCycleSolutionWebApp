@@ -25,25 +25,25 @@ function HowItWorks() {
         {/* STEPS */}
         <div className="how-steps">
           <div className="how-step">
-            <span>🗑️</span>
+            <span>1</span>
             <h4>Separate Waste</h4>
             <p>Sort recyclable waste at home.</p>
           </div>
 
           <div className="how-step">
-            <span>📱</span>
+            <span>2</span>
             <h4>Log in App</h4>
             <p>Schedule or record collection.</p>
           </div>
 
           <div className="how-step">
-            <span>🚛</span>
+            <span>3</span>
             <h4>We Collect</h4>
             <p>Collected and processed safely.</p>
           </div>
 
           <div className="how-step highlight">
-            <span>🎁</span>
+            <span>4</span>
             <h4>Earn Rewards</h4>
             <p>Get points & track impact.</p>
           </div>
@@ -51,10 +51,10 @@ function HowItWorks() {
 
         {/* EXTRA APP INFO */}
         <div className="how-extra">
-          <div className="extra-box">♻️ Track recycling history</div>
-          <div className="extra-box">📊 See your impact</div>
-          <div className="extra-box">🎁 Redeem rewards</div>
-          <div className="extra-box">🌱 Help your city</div>
+          <div className="extra-box">Track recycling history</div>
+          <div className="extra-box">See your impact</div>
+          <div className="extra-box">Redeem rewards</div>
+          <div className="extra-box">Help your city</div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { LoadingPage } from "../components/Loader";
 import { toast } from "react-toastify";
+import api from "../../api/axios";
 import "../style/WasteAnalytics.css";
 
 export default function WasteAnalytics() {
@@ -13,35 +14,35 @@ export default function WasteAnalytics() {
   const [wasteData, setWasteData] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("month");
 
-  const token = localStorage.getItem("token");
-
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "📱", label: "Waste Scanner", href: "/waste-scanner" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   useEffect(() => {
     fetchAnalytics();
+    
+    // Auto-refresh analytics every 30 seconds
+    const refreshInterval = setInterval(fetchAnalytics, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, [selectedPeriod]);
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/pickup/my-pickups?limit=100",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      setLoading(true);
+      const response = await api.get("/pickup/my-pickups?limit=100");
 
-      const data = await response.json();
-      if (data.success) {
+      if (response.data.success) {
         // Process data
-        const pickups = data.data || [];
+        const pickups = response.data.data || [];
         
         // Group by waste type
         const wasteByType = {};
@@ -72,10 +73,12 @@ export default function WasteAnalytics() {
           co2Saved: (totalWeight * 0.21).toFixed(1),
           ecoPoints: pickups.length * 100,
         });
+        
+        toast.success("Analytics updated");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to load analytics");
+      console.error("Analytics error:", error);
+      toast.error(error.response?.data?.message || "Failed to load analytics");
     } finally {
       setLoading(false);
     }

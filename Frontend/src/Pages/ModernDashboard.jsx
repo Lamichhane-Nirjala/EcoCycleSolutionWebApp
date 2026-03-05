@@ -19,15 +19,22 @@ export default function ModernDashboard() {
 
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   useEffect(() => {
     fetchDashboardData();
+    
+    // Auto-refresh dashboard data every 30 seconds
+    const refreshInterval = setInterval(fetchDashboardData, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -114,7 +121,7 @@ export default function ModernDashboard() {
 
       <main className="main-content">
         <Header
-          title={`Welcome back, ${firstName}! 👋`}
+          title={`Welcome back, ${firstName}!`}
           subtitle="Here's your waste management overview"
         />
 

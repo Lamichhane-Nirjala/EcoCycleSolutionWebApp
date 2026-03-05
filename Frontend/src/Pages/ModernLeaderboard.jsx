@@ -16,15 +16,22 @@ export default function Leaderboard() {
 
   const menuItems = [
     { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+    { icon: "👤", label: "Profile", href: "/profile" },
     { icon: "♻️", label: "Waste Tracker", href: "/waste-tracker" },
     { icon: "🚚", label: "Schedule Pickup", href: "/schedule-pickup" },
     { icon: "📊", label: "Analytics", href: "/analytics" },
     { icon: "🏆", label: "Leaderboard", href: "/leaderboard" },
     { icon: "🎁", label: "Rewards", href: "/rewards" },
+    { icon: "🔔", label: "Notifications", href: "/notifications" },
   ];
 
   useEffect(() => {
     fetchLeaderboardData();
+    
+    // Auto-refresh leaderboard every 30 seconds for real-time updates
+    const refreshInterval = setInterval(fetchLeaderboardData, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchLeaderboardData = async () => {
@@ -76,7 +83,7 @@ export default function Leaderboard() {
 
       <main className="main-content">
         <Header
-          title="Eco Leaderboard 🏆"
+          title="Eco Leaderboard"
           subtitle="Top performers in waste recycling and eco-consciousness"
         />
 

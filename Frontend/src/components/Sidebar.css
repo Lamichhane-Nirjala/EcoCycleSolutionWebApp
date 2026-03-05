@@ -208,13 +208,25 @@
 /* Mobile */
 @media (max-width: 480px) {
   .sidebar {
-    width: 100%;
+    width: 100vw;
+    max-width: 85vw;
     transform: translateX(-100%);
     box-shadow: 4px 0 16px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
   }
 
   .sidebar.open {
     transform: translateX(0);
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
   }
 
   .sidebar-overlay {

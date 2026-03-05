@@ -7,6 +7,7 @@ import { Modal } from "../components/Modal";
 import { Input, FormGroup } from "../components/Form";
 import { LoadingPage } from "../components/Loader";
 import { toast } from "react-toastify";
+import api from "../../api/axios";
 import "../style/AdminUserManagement.css";
 
 export default function AdminUserManagement() {
@@ -24,90 +25,65 @@ export default function AdminUserManagement() {
   const adminMenuItems = [
     { icon: "📊", label: "Dashboard", href: "/admin-dashboard" },
     { icon: "👥", label: "Users", href: "/admin-users" },
-    { icon: "🚚", label: "Pickups", href: "/admin-dashboard" },
-    { icon: "📈", label: "Analytics", href: "/admin-dashboard" },
-    { icon: "⚙️", label: "Settings", href: "/admin-dashboard" },
+    { icon: "🚚", label: "Pickups", href: "/admin-pickups" },
+    { icon: "📈", label: "Analytics", href: "/admin-analytics" },
+    { icon: "🌍", label: "Impact", href: "/admin-impact" },
   ];
 
   useEffect(() => {
     fetchUsers();
+    
+    // Auto-refresh users every 30 seconds for real-time updates
+    const refreshInterval = setInterval(fetchUsers, 30000);
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchUsers = async () => {
     try {
-      // Mock data - In production, fetch from API
-      const mockUsers = [
-        {
-          id: 1,
-          name: "John Doe",
-          email: "john@example.com",
-          phone: "555-1234",
-          city: "New York",
-          usertype: "User",
-          createdAt: "2026-01-15",
-          pickups: 12,
-          totalWaste: 45.5,
-          ecoPoints: 1250,
-          status: "Active",
-        },
-        {
-          id: 2,
-          name: "Maria Silva",
-          email: "maria@example.com",
-          phone: "555-5678",
-          city: "Los Angeles",
-          usertype: "Admin",
-          createdAt: "2026-01-10",
-          pickups: 0,
-          totalWaste: 0,
-          ecoPoints: 0,
-          status: "Active",
-        },
-        {
-          id: 3,
-          name: "James Chen",
-          email: "james@example.com",
-          phone: "555-9012",
-          city: "Chicago",
-          usertype: "User",
-          createdAt: "2025-12-20",
-          pickups: 8,
-          totalWaste: 32.3,
-          ecoPoints: 890,
-          status: "Active",
-        },
-        {
-          id: 4,
-          name: "Sofia Lopez",
-          email: "sofia@example.com",
-          phone: "555-3456",
-          city: "Houston",
-          usertype: "User",
-          createdAt: "2025-12-01",
-          pickups: 5,
-          totalWaste: 18.7,
-          ecoPoints: 520,
-          status: "Inactive",
-        },
-        {
-          id: 5,
-          name: "Emma Davis",
-          email: "emma@example.com",
-          phone: "555-7890",
-          city: "Phoenix",
-          usertype: "User",
-          createdAt: "2025-11-15",
-          pickups: 15,
-          totalWaste: 62.1,
-          ecoPoints: 1650,
-          status: "Active",
-        },
-      ];
+      setLoading(true);
+      const response = await api.get("/auth/all");
+      
+      if (response.data.success) {
+        let enrichedUsers = response.data.data;
 
-      setUsers(mockUsers);
+        // Try to get dashboard stats for enrichment
+        try {
+          const dashboardRes = await api.get("/admin/dashboard");
+          const dashboardData = dashboardRes.data.data || {};
+          const topUsers = dashboardData.topUsers || [];
+          
+          // Merge user data with their stats
+          enrichedUsers = response.data.data.map(user => {
+            const userStats = topUsers.find(u => u.id === user.id) || {};
+            return {
+              ...user,
+              name: user.username,
+              status: "Active",
+              pickups: userStats.pickups || 0,
+              totalWaste: userStats.waste || 0,
+              ecoPoints: (userStats.pickups * 10) + (userStats.waste * 1) || 0,
+            };
+          });
+        } catch (statsError) {
+          // If stats enrichment fails, still show users without stats
+          console.warn("Could not load user stats:", statsError);
+          enrichedUsers = response.data.data.map(user => ({
+            ...user,
+            name: user.username,
+            status: "Active",
+            pickups: 0,
+            totalWaste: 0,
+            ecoPoints: 0,
+          }));
+        }
+        
+        setUsers(enrichedUsers);
+        toast.success(`✅ Loaded ${enrichedUsers.length} users`);
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to load users");
+      console.error("Error fetching users:", error);
+      toast.error(error.response?.data?.message || "Failed to load users");
     } finally {
       setLoading(false);
     }

@@ -91,8 +91,9 @@ function Login() {
 
         <p className="auth-footer">
           Don’t have an account? <Link to="/signup">Sign up</Link>
-        </p>
-      </div>
+        </p>        <p className="auth-footer">
+          Forgot your password? <Link to="/forgot-password">Reset it here</Link>
+        </p>      </div>
     </div>
   );
 }

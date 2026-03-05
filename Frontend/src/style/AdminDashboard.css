@@ -1,10 +1,5 @@
-/* Admin Dashboard Styles */
-
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f9fafb;
-}
+/* Admin Dashboard Styles - Uses ModernDashboard base */
+@import url('./ModernDashboard.css');
 
 .main-content {
   flex: 1;
@@ -345,10 +340,5 @@
 
   .user-points {
     text-align: left;
-  }
-}
-
-  .section-header {
-    flex-direction: row;
   }
 }
