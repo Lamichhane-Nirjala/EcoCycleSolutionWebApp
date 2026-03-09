@@ -14,6 +14,60 @@ const calculateEcoPoints = (pickupCount, totalWaste) => {
   return (pickupCount * pointsPerPickup) + (totalWaste * pointsPerKg);
 };
 
+/**
+ * GET PUBLIC LEADERBOARD DATA
+ * Returns top users ranked by eco points (no admin auth required)
+ */
+export const getPublicLeaderboard = async (req, res) => {
+  try {
+    // Top users by pickup count
+    const topUsersRaw = await Pickup.findAll({
+      attributes: [
+        "userId",
+        [sequelize.fn("COUNT", sequelize.col("pickupId")), "pickupCount"],
+        [sequelize.fn("SUM", sequelize.col("estimatedWeight")), "totalWaste"],
+      ],
+      group: ["userId"],
+      order: [[sequelize.fn("COUNT", sequelize.col("pickupId")), "DESC"]],
+      limit: 10,
+      raw: true,
+      subQuery: false,
+    });
+
+    // Get user details for top users
+    const topUsers = [];
+    for (const userPickup of topUsersRaw) {
+      const user = await User.findByPk(userPickup.userId, {
+        attributes: ["id", "username", "email"],
+      });
+      if (user) {
+        topUsers.push({
+          id: user.id,
+          name: user.username,
+          email: user.email,
+          pickups: parseInt(userPickup.pickupCount) || 0,
+          waste: parseFloat(userPickup.totalWaste) || 0,
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leaderboard data fetched successfully",
+      data: {
+        topUsers: topUsers,
+      },
+    });
+  } catch (error) {
+    console.error("Leaderboard error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch leaderboard",
+      error: error.message,
+    });
+  }
+};
+
 export const getDashboard = async (req, res) => {
   try {
     const userId = req.user.id;

@@ -5,7 +5,7 @@ import { Sidebar } from "../components/Sidebar";
 import { Header, PageContainer } from "../components/Header";
 import { Card, AnalyticsCard } from "../components/Card";
 import { LoadingPage } from "../components/Loader";
-import "../style/Admin.css";
+import "../style/EnvironmentalImpact.css";
 
 export default function EnvironmentalImpact() {
   const [stats, setStats] = useState(null);
@@ -50,15 +50,18 @@ export default function EnvironmentalImpact() {
     return () => clearInterval(refreshInterval);
   }, []);
 
+  // Ensure pickups is always an array
+  const pickupsArray = Array.isArray(pickups) ? pickups : [];
+
   // Environmental impact calculations
-  const totalWasteCollected = pickups.reduce((sum, p) => sum + (p.estimatedWeight || 0), 0);
+  const totalWasteCollected = pickupsArray.reduce((sum, p) => sum + (p.estimatedWeight || 0), 0);
   const co2Saved = totalWasteCollected * 0.21; // kg CO2 per kg waste diverted from landfill
   const treesSaved = totalWasteCollected * 0.04; // Equivalent trees needed to offset CO2
   const waterSaved = totalWasteCollected * 2.5; // Liters of water saved per kg of plastic recycled
   const energySaved = totalWasteCollected * 1.8; // kWh of energy saved per kg
 
   // Waste category breakdown for impact
-  const wasteByType = pickups.reduce((acc, p) => {
+  const wasteByType = pickupsArray.reduce((acc, p) => {
     const type = p.wasteType;
     if (!acc[type]) {
       acc[type] = { count: 0, weight: 0 };
@@ -98,42 +101,42 @@ export default function EnvironmentalImpact() {
           <div className="analytics-grid">
             <AnalyticsCard
               label="Total Waste Diverted"
-              value={totalWasteCollected.toFixed(1)}
+              value={(totalWasteCollected || 0).toFixed(1)}
               unit="kg from landfill"
               color="#10b981"
               icon="♻️"
             />
             <AnalyticsCard
               label="CO₂ Emissions Prevented"
-              value={co2Saved.toFixed(1)}
+              value={(co2Saved || 0).toFixed(1)}
               unit="kg CO₂"
               color="#059669"
               icon="🌫️"
             />
             <AnalyticsCard
               label="Trees Worth of Carbon"
-              value={treesSaved.toFixed(1)}
+              value={(treesSaved || 0).toFixed(1)}
               unit="trees planted equivalent"
               color="#7c3aed"
               icon="🌳"
             />
             <AnalyticsCard
               label="Water Preserved"
-              value={(waterSaved / 1000).toFixed(1)}
+              value={((waterSaved || 0) / 1000).toFixed(1)}
               unit="thousand liters"
               color="#06b6d4"
               icon="💧"
             />
             <AnalyticsCard
               label="Energy Saved"
-              value={energySaved.toFixed(1)}
+              value={(energySaved || 0).toFixed(1)}
               unit="kWh"
               color="#f59e0b"
               icon="⚡"
             />
             <AnalyticsCard
               label="Landfill Space Saved"
-              value={(totalWasteCollected * 0.5).toFixed(1)}
+              value={((totalWasteCollected || 0) * 0.5).toFixed(1)}
               unit="cubic meters"
               color="#8b5cf6"
               icon="📦"
@@ -158,9 +161,9 @@ export default function EnvironmentalImpact() {
                       {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                     </h3>
                     <div style={{ fontSize: "12px", color: "#6b7280", lineHeight: "1.8" }}>
-                      <p style={{ margin: "4px 0" }}>📦 Weight: {item.weight.toFixed(1)} kg</p>
-                      <p style={{ margin: "4px 0" }}>🌫️ CO₂ Prevented: {item.co2.toFixed(1)} kg</p>
-                      <p style={{ margin: "4px 0" }}>🌳 Trees Equivalent: {item.trees.toFixed(2)}</p>
+                      <p style={{ margin: "4px 0" }}>📦 Weight: {(item.weight || 0).toFixed(1)} kg</p>
+                      <p style={{ margin: "4px 0" }}>🌫️ CO₂ Prevented: {(item.co2 || 0).toFixed(1)} kg</p>
+                      <p style={{ margin: "4px 0" }}>🌳 Trees Equivalent: {(item.trees || 0).toFixed(2)}</p>
                     </div>
                   </div>
                 </Card>
@@ -185,7 +188,7 @@ export default function EnvironmentalImpact() {
                     ♻️ Circular Economy
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
-                    By recycling {totalWasteCollected.toFixed(1)} kg of waste, you're keeping valuable resources in circulation and reducing the need for virgin material extraction.
+                    By recycling {(totalWasteCollected || 0).toFixed(1)} kg of waste, you're keeping valuable resources in circulation and reducing the need for virgin material extraction.
                   </p>
                   <p style={{ margin: "12px 0 0 0", fontSize: "12px", color: "#9ca3af" }}>
                     ✅ Reduces mining impact
@@ -202,7 +205,7 @@ export default function EnvironmentalImpact() {
                     Climate Action
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
-                    Preventing {co2Saved.toFixed(1)} kg of CO₂ emissions is equivalent to the annual carbon footprint of {(co2Saved / 4752).toFixed(1)} person.
+                    Preventing {(co2Saved || 0).toFixed(1)} kg of CO₂ emissions is equivalent to the annual carbon footprint of {((co2Saved || 0) / 4752).toFixed(1)} person.
                   </p>
                   <p style={{ margin: "12px 0 0 0", fontSize: "12px", color: "#9ca3af" }}>
                     ✅ Fights climate change
@@ -219,7 +222,7 @@ export default function EnvironmentalImpact() {
                     Reforestation
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
-                    The CO₂ saved is equivalent to planting {treesSaved.toFixed(1)} trees and letting them grow for 10 years.
+                    The CO₂ saved is equivalent to planting {(treesSaved || 0).toFixed(1)} trees and letting them grow for 10 years.
                   </p>
                   <p style={{ margin: "12px 0 0 0", fontSize: "12px", color: "#9ca3af" }}>
                     ✅ Supports reforestation
@@ -236,7 +239,7 @@ export default function EnvironmentalImpact() {
                     💧 Water Conservation
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
-                    Recycling instead of producing new materials saves {(waterSaved / 1000).toFixed(1)}k liters of water.
+                    Recycling instead of producing new materials saves {((waterSaved || 0) / 1000).toFixed(1)}k liters of water.
                   </p>
                   <p style={{ margin: "12px 0 0 0", fontSize: "12px", color: "#9ca3af" }}>
                     ✅ Preserves freshwater
@@ -253,7 +256,7 @@ export default function EnvironmentalImpact() {
                     ⚡ Energy Savings
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
-                    Saves {energySaved.toFixed(1)} kWh of energy - enough to power a home for {(energySaved / 30).toFixed(1)} days.
+                    Saves {(energySaved || 0).toFixed(1)} kWh of energy - enough to power a home for {((energySaved || 0) / 30).toFixed(1)} days.
                   </p>
                   <p style={{ margin: "12px 0 0 0", fontSize: "12px", color: "#9ca3af" }}>
                     ✅ Reduces energy demand
@@ -270,7 +273,7 @@ export default function EnvironmentalImpact() {
                     Landfill Reduction
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
-                    Diverts waste equivalent to {(totalWasteCollected * 0.5).toFixed(1)} cubic meters of landfill space.
+                    Diverts waste equivalent to {((totalWasteCollected || 0) * 0.5).toFixed(1)} cubic meters of landfill space.
                   </p>
                   <p style={{ margin: "12px 0 0 0", fontSize: "12px", color: "#9ca3af" }}>
                     ✅ Extends landfill life

@@ -37,13 +37,13 @@ export default function Leaderboard() {
   const fetchLeaderboardData = async () => {
     try {
       setLoading(true);
-      // Fetch top users from admin API
-      const response = await api.get("/admin/dashboard");
+      // Fetch top users from leaderboard API (no admin auth required)
+      const response = await api.get("/dashboard/leaderboard");
       
       if (response.data.success && response.data.data.topUsers) {
         const topUsers = response.data.data.topUsers;
         
-        // Transform admin data into leaderboard format
+        // Transform data into leaderboard format
         const leaderboardData = topUsers.map((user, idx) => {
           const ecoPoints = (user.pickups * 10) + (user.waste * 1);
           const rank = idx < 3 ? (idx === 0 ? "🥇 Gold" : idx === 1 ? "🥈 Silver" : "🥉 Bronze") : "Green";

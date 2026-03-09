@@ -67,7 +67,7 @@ const startServer = async () => {
     console.log("✅ Database connected");
     
     createUploadsFolder();
-    console.log("✅ Uploads folder created");
+    console.log("");
 
     app.listen(PORT, () => {
       console.log(` Server running on port ${PORT}`);

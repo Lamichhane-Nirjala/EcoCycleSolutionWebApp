@@ -7,7 +7,7 @@ import { Card, AnalyticsCard } from "../components/Card";
 import { Button } from "../components/Button";
 import { Input, Select } from "../components/Form";
 import { LoadingPage } from "../components/Loader";
-import "../style/Admin.css";
+import "../style/AdminDriverManagement.css";
 
 export default function DriverManagement() {
   const [drivers, setDrivers] = useState([]);

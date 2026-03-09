@@ -6,7 +6,7 @@ import { Header, PageContainer } from "../components/Header";
 import { Card, AnalyticsCard } from "../components/Card";
 import { Input, Select } from "../components/Form";
 import { LoadingPage } from "../components/Loader";
-import "../style/Admin.css";
+import "../style/AdminAnalytics.css";
 
 export default function AdminAnalytics() {
   const [pickups, setPickups] = useState([]);
@@ -28,7 +28,7 @@ export default function AdminAnalytics() {
       setLoading(true);
       const [pickupsRes, usersRes, statsRes] = await Promise.all([
         api.get("/pickup/admin/all?limit=1000"),
-        api.get("/auth/all"),
+        api.get("/admin/users"),
         api.get("/pickup/admin/stats"),
       ]);
 
@@ -62,23 +62,27 @@ export default function AdminAnalytics() {
     return () => clearInterval(refreshInterval);
   }, []);
 
+  // Ensure pickups and users are arrays
+  const pickupsArray = Array.isArray(pickups) ? pickups : [];
+  const usersArray = Array.isArray(users) ? users : [];
+
   // Calculate analytics
-  const totalPickups = pickups.length;
-  const completedPickups = pickups.filter((p) => p.status === "Completed").length;
+  const totalPickups = pickupsArray.length;
+  const completedPickups = pickupsArray.filter((p) => p.status === "Completed").length;
   const completionRate = ((completedPickups / totalPickups) * 100 || 0).toFixed(1);
   
-  const totalUsers = users.length;
-  const activeUsers = users.filter((u) => u.status === "active").length;
-  const totalWaste = pickups.reduce((sum, p) => sum + (p.estimatedWeight || 0), 0);
+  const totalUsers = usersArray.length;
+  const activeUsers = usersArray.filter((u) => u.status === "active").length;
+  const totalWaste = pickupsArray.reduce((sum, p) => sum + (p.estimatedWeight || 0), 0);
   
   // Pickup status breakdown
-  const statusCounts = pickups.reduce((acc, p) => {
+  const statusCounts = pickupsArray.reduce((acc, p) => {
     acc[p.status] = (acc[p.status] || 0) + 1;
     return acc;
   }, {});
 
   // Waste type distribution
-  const wasteTypeStats = pickups.reduce((acc, p) => {
+  const wasteTypeStats = pickupsArray.reduce((acc, p) => {
     const type = p.wasteType;
     if (!acc[type]) {
       acc[type] = { count: 0, weight: 0, percentage: 0 };
@@ -95,16 +99,16 @@ export default function AdminAnalytics() {
   });
 
   // Top users by pickups
-  const topUsers = users
+  const topUsers = usersArray
     .map((u) => ({
       ...u,
-      pickupsCount: pickups.filter((p) => p.userId === u.userId).length,
+      pickupsCount: pickupsArray.filter((p) => p.userId === u.userId).length,
     }))
     .sort((a, b) => b.pickupsCount - a.pickupsCount)
     .slice(0, 5);
 
   // Daily pickup trend (simplified)
-  const dailyTrend = pickups.reduce((acc, p) => {
+  const dailyTrend = pickupsArray.reduce((acc, p) => {
     const date = new Date(p.createdAt).toLocaleDateString();
     acc[date] = (acc[date] || 0) + 1;
     return acc;
@@ -177,21 +181,21 @@ export default function AdminAnalytics() {
             />
             <AnalyticsCard
               label="Total Waste Processed"
-              value={totalWaste.toFixed(1)}
+              value={(totalWaste || 0).toFixed(1)}
               unit="kg"
               color="#8b5cf6"
               icon="♻️"
             />
             <AnalyticsCard
               label="CO₂ Prevented"
-              value={(totalWaste * 0.21).toFixed(1)}
+              value={((totalWaste || 0) * 0.21).toFixed(1)}
               unit="kg"
               color="#f59e0b"
               icon="🌍"
             />
             <AnalyticsCard
               label="Avg Waste per Pickup"
-              value={(totalWaste / totalPickups || 0).toFixed(1)}
+              value={((totalWaste || 0) / (totalPickups || 1) || 0).toFixed(1)}
               unit="kg"
               color="#ec4899"
               icon="📊"
@@ -285,9 +289,9 @@ export default function AdminAnalytics() {
                     </div>
                     <div style={{ fontSize: "12px", color: "#6b7280" }}>
                       <p style={{ margin: "4px 0" }}>Count: {data.count}</p>
-                      <p style={{ margin: "4px 0" }}>⚖️ Weight: {data.weight.toFixed(1)} kg</p>
+                      <p style={{ margin: "4px 0" }}>⚖️ Weight: {(data.weight || 0).toFixed(1)} kg</p>
                       <p style={{ margin: "4px 0", fontWeight: "600", color: "#4ade80" }}>
-                        💯 Percentage: {data.percentage}%
+                        💯 Percentage: {(data.percentage || 0)}%
                       </p>
                     </div>
                   </div>
@@ -400,8 +404,8 @@ export default function AdminAnalytics() {
                     ♻️ Impact
                   </h3>
                   <p style={{ margin: "0", fontSize: "13px", color: "#6b7280" }}>
-                    {totalWaste.toFixed(0)} kg of waste successfully diverted from landfills,
-                    preventing {(totalWaste * 0.21).toFixed(0)} kg of CO₂ emissions.
+                    {(totalWaste || 0).toFixed(0)} kg of waste successfully diverted from landfills,
+                    preventing {((totalWaste || 0) * 0.21).toFixed(0)} kg of CO₂ emissions.
                   </p>
                 </div>
               </Card>

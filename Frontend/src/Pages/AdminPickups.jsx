@@ -7,7 +7,7 @@ import { Card, AnalyticsCard } from "../components/Card";
 import { Button } from "../components/Button";
 import { Input, Select } from "../components/Form";
 import { LoadingPage } from "../components/Loader";
-import "../style/Admin.css";
+import "../style/AdminPickups.css";
 
 export default function AdminPickups() {
   const [pickups, setPickups] = useState([]);
@@ -82,8 +82,11 @@ export default function AdminPickups() {
     }
   };
 
+  // Ensure pickups is always an array
+  const pickupsArray = Array.isArray(pickups) ? pickups : [];
+
   // Filter pickups
-  const filteredPickups = pickups.filter((p) => {
+  const filteredPickups = pickupsArray.filter((p) => {
     const matchSearch =
       p.wasteType.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.user?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -96,18 +99,18 @@ export default function AdminPickups() {
   });
 
   // Get waste type breakdown
-  const wasteTypeStats = pickups.reduce((acc, p) => {
+  const wasteTypeStats = pickupsArray.reduce((acc, p) => {
     const type = p.wasteType;
     if (!acc[type]) {
       acc[type] = { count: 0, weight: 0 };
     }
     acc[type].count += 1;
-    acc[type].weight += p.estimatedWeight;
+    acc[type].weight += (p.estimatedWeight || 0);
     return acc;
   }, {});
 
   // Get status breakdown
-  const statusStats = pickups.reduce((acc, p) => {
+  const statusStats = pickupsArray.reduce((acc, p) => {
     const status = p.status;
     acc[status] = (acc[status] || 0) + 1;
     return acc;
@@ -152,7 +155,7 @@ export default function AdminPickups() {
           <div className="analytics-grid">
             <AnalyticsCard
               label="Total Pickups"
-              value={pickups.length}
+              value={pickupsArray.length}
               unit="requests"
               color="#4ade80"
               icon="📦"
@@ -173,7 +176,7 @@ export default function AdminPickups() {
             />
             <AnalyticsCard
               label="Total Waste Collected"
-              value={pickups.reduce((sum, p) => sum + p.estimatedWeight, 0).toFixed(1)}
+              value={(Math.max(0, pickupsArray.reduce((sum, p) => sum + (p.estimatedWeight || 0), 0)) || 0).toFixed(1)}
               unit="kg"
               color="#06b6d4"
               icon="♻️"
@@ -187,7 +190,7 @@ export default function AdminPickups() {
             />
             <AnalyticsCard
               label="CO₂ Saved"
-              value={(pickups.reduce((sum, p) => sum + p.estimatedWeight, 0) * 0.21).toFixed(1)}
+              value={(Math.max(0, pickupsArray.reduce((sum, p) => sum + (p.estimatedWeight || 0), 0)) * 0.21).toFixed(1)}
               unit="kg"
               color="#059669"
               icon="🌍"
@@ -195,25 +198,20 @@ export default function AdminPickups() {
           </div>
 
           {/* Waste Type Breakdown */}
-          <div className="section" style={{ marginTop: "32px" }}>
+          <div className="waste-type-section">
             <h2 className="section-title">📊 Waste Type Distribution</h2>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "16px",
-              marginTop: "16px"
-            }}>
+            <div className="waste-type-grid">
               {Object.entries(wasteTypeStats).map(([type, data]) => (
                 <Card key={type}>
-                  <div style={{ padding: "16px", textAlign: "center" }}>
-                    <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#6b7280" }}>
+                  <div className="waste-card">
+                    <p className="waste-card-label">
                       {type.charAt(0).toUpperCase() + type.slice(1)}
                     </p>
-                    <h3 style={{ margin: "8px 0", fontSize: "24px", color: "#4ade80" }}>
+                    <h3 className="waste-card-count">
                       {data.count}
                     </h3>
-                    <p style={{ margin: "0", fontSize: "12px", color: "#9ca3af" }}>
-                      {data.weight.toFixed(1)} kg
+                    <p className="waste-card-weight">
+                      {(data.weight || 0).toFixed(1)} kg
                     </p>
                   </div>
                 </Card>
@@ -222,29 +220,19 @@ export default function AdminPickups() {
           </div>
 
           {/* Status Overview */}
-          <div className="section" style={{ marginTop: "24px" }}>
+          <div className="status-overview-section">
             <h2 className="section-title">Pickup Status Overview</h2>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-              gap: "16px",
-              marginTop: "16px"
-            }}>
+            <div className="status-grid">
               {["Pending", "Assigned", "In Progress", "Completed", "Cancelled"].map((status) => (
                 <div
                   key={status}
-                  style={{
-                    padding: "16px",
-                    background: "#f9fafb",
-                    borderRadius: "8px",
-                    borderLeft: `4px solid ${statusColor(status)}`,
-                    textAlign: "center"
-                  }}
+                  className="status-card"
+                  style={{ borderLeft: `4px solid ${statusColor(status)}` }}
                 >
-                  <p style={{ margin: "0 0 8px 0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>
+                  <p className="status-card-label">
                     {status}
                   </p>
-                  <h3 style={{ margin: 0, fontSize: "28px", fontWeight: "700", color: statusColor(status) }}>
+                  <h3 className="status-card-number" style={{ color: statusColor(status) }}>
                     {statusStats[status] || 0}
                   </h3>
                 </div>
@@ -253,13 +241,13 @@ export default function AdminPickups() {
           </div>
 
           {/* Filters */}
-          <div className="section" style={{ marginTop: "24px", display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "flex-end" }}>
+          <div className="filters-section section">
             <Input
               label="Search"
               placeholder="Search by user, waste type..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ flex: 1, minWidth: "200px" }}
+              className="filter-input"
             />
             <Select
               label="Status"
@@ -289,79 +277,64 @@ export default function AdminPickups() {
           </div>
 
           {/* Pickups Table */}
-          <div className="section" style={{ marginTop: "24px", overflowX: "auto" }}>
+          <div className="pickups-table-section section">
             <h2 className="section-title">📋 Pickup Requests ({filteredPickups.length})</h2>
             {filteredPickups.length === 0 ? (
-              <p style={{ textAlign: "center", color: "#6b7280", padding: "32px" }}>
+              <p className="no-pickups-message">
                 No pickups found
               </p>
             ) : (
-              <table style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                marginTop: "16px"
-              }}>
-                <thead>
-                  <tr style={{ borderBottom: "2px solid #e5e7eb", background: "#f9fafb" }}>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>ID</th>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>User</th>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>Type</th>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>Weight</th>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>Address</th>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>Status</th>
-                    <th style={{ padding: "12px", textAlign: "left", fontSize: "12px", fontWeight: "700", color: "#6b7280" }}>Actions</th>
+              <table className="pickups-table">
+                <thead className="pickups-table-header">
+                  <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Weight</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredPickups.map((pickup, idx) => (
-                    <tr key={idx} style={{ borderBottom: "1px solid #e5e7eb", hover: { background: "#f9fafb" } }}>
-                      <td style={{ padding: "12px", fontSize: "12px", color: "#6b7280" }}>
+                    <tr key={idx}>
+                      <td className="pickup-id">
                         {pickup.pickupId?.substring(0, 8)}...
                       </td>
-                      <td style={{ padding: "12px", fontSize: "13px" }}>
+                      <td className="pickup-user">
                         <div>
-                          <p style={{ margin: 0, fontWeight: "600" }}>{pickup.user?.username || "N/A"}</p>
-                          <p style={{ margin: "4px 0 0 0", fontSize: "11px", color: "#9ca3af" }}>
+                          <p className="pickup-user-name">{pickup.user?.username || "N/A"}</p>
+                          <p className="pickup-user-email">
                             {pickup.user?.email}
                           </p>
                         </div>
                       </td>
-                      <td style={{ padding: "12px", fontSize: "13px", fontWeight: "600" }}>
+                      <td className="pickup-type">
                         {pickup.wasteType.charAt(0).toUpperCase() + pickup.wasteType.slice(1)}
                       </td>
-                      <td style={{ padding: "12px", fontSize: "13px", color: "#4ade80", fontWeight: "600" }}>
+                      <td className="pickup-weight">
                         {pickup.estimatedWeight} kg
                       </td>
-                      <td style={{ padding: "12px", fontSize: "12px", color: "#6b7280", maxWidth: "150px" }}>
+                      <td className="pickup-address">
                         {pickup.pickupAddress?.substring(0, 30)}...
                       </td>
-                      <td style={{ padding: "12px" }}>
-                        <span style={{
-                          display: "inline-block",
-                          padding: "6px 12px",
+                      <td>
+                        <span className="status-badge-inline" style={{
                           background: statusColor(pickup.status) + "20",
                           color: statusColor(pickup.status),
-                          borderRadius: "20px",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          border: `1px solid ${statusColor(pickup.status)}`
+                          borderColor: statusColor(pickup.status)
                         }}>
                           {pickup.status}
                         </span>
                       </td>
-                      <td style={{ padding: "12px" }}>
+                      <td>
                         <select
                           onChange={(e) => {
                             if (e.target.value) updatePickupStatus(pickup.pickupId, e.target.value);
                             e.target.value = "";
                           }}
-                          style={{
-                            padding: "6px 8px",
-                            border: "1px solid #d1d5db",
-                            borderRadius: "6px",
-                            fontSize: "12px",
-                            cursor: "pointer",
-                          }}
+                          className="status-selector"
                         >
                           <option value="">Change Status</option>
                           {pickup.status === "Pending" && (

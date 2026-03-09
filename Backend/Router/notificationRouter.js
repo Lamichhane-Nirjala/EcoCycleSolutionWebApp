@@ -17,11 +17,11 @@ notificationRouter.get("/all", auth, getUserNotifications);
 // Get unread notifications count
 notificationRouter.get("/unread-count", auth, getUnreadCount);
 
+// Mark all notifications as read (MUST BE BEFORE /:notificationId/read)
+notificationRouter.put("/read-all", auth, markAllAsRead);
+
 // Mark notification as read
 notificationRouter.put("/:notificationId/read", auth, markAsRead);
-
-// Mark all notifications as read
-notificationRouter.put("/read-all", auth, markAllAsRead);
 
 // Delete notification
 notificationRouter.delete("/:notificationId", auth, deleteNotification);

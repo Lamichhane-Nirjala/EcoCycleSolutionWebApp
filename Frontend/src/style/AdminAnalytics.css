@@ -1,0 +1,157 @@
+/* AdminAnalytics Page Styles */
+
+.analytics-time-range {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.time-range-select {
+  min-width: 200px;
+}
+
+.analytics-status-section {
+  margin-top: 24px;
+}
+
+.status-pills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.status-pill {
+  padding: 16px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.status-pill-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.status-pill-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Waste Type Section */
+.waste-type-section {
+  margin-top: 24px;
+}
+
+.waste-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.waste-type-card {
+  padding: 16px;
+}
+
+.waste-type-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4ade80;
+}
+
+.waste-type-stats {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.waste-type-stat {
+  margin: 4px 0;
+}
+
+.waste-type-percentage {
+  font-weight: 600;
+  color: #4ade80;
+}
+
+/* Top Contributors Section */
+.contributors-section {
+  margin-top: 24px;
+}
+
+.contributors-grid {
+  margin-top: 16px;
+}
+
+.contributor-item {
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contributor-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.contributor-count {
+  background: #4ade80;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.no-contributors {
+  text-align: center;
+  color: #6b7280;
+  padding: 24px;
+}
+
+/* Impact Summary */
+.impact-summary {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #4ade80 0%, #10b981 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.impact-summary-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.impact-summary-text {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.impact-summary-highlight {
+  font-weight: 600;
+}

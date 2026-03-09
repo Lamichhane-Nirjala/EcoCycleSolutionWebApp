@@ -1,0 +1,161 @@
+/* EnvironmentalImpact Page Styles */
+
+.impact-section {
+  margin-top: 24px;
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.impact-card {
+  padding: 16px;
+}
+
+.impact-card-title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.impact-card-content {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.8;
+}
+
+.impact-stat {
+  margin: 4px 0;
+}
+
+.impact-breakdown-section {
+  margin-top: 24px;
+}
+
+.impact-breakdown-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.impact-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.impact-breakdown-item {
+  padding: 20px;
+  border-left: 4px solid;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.impact-breakdown-item-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.impact-breakdown-item-description {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.impact-breakdown-item-benefit {
+  margin: 12px 0 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.impact-breakdown-green {
+  border-left-color: #10b981;
+  background: #f0fdf4;
+}
+
+.impact-breakdown-green .impact-breakdown-item-title {
+  color: #10b981;
+}
+
+.impact-breakdown-emerald {
+  border-left-color: #059669;
+  background: #f0fdf4;
+}
+
+.impact-breakdown-emerald .impact-breakdown-item-title {
+  color: #059669;
+}
+
+.impact-breakdown-purple {
+  border-left-color: #7c3aed;
+  background: #faf5ff;
+}
+
+.impact-breakdown-purple .impact-breakdown-item-title {
+  color: #7c3aed;
+}
+
+.impact-breakdown-water {
+  border-left-color: #06b6d4;
+  background: #f0f9ff;
+}
+
+.impact-breakdown-water .impact-breakdown-item-title {
+  color: #06b6d4;
+}
+
+.impact-breakdown-amber {
+  border-left-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.impact-breakdown-amber .impact-breakdown-item-title {
+  color: #f59e0b;
+}
+
+.impact-breakdown-slate {
+  border-left-color: #64748b;
+  background: #f8fafc;
+}
+
+.impact-breakdown-slate .impact-breakdown-item-title {
+  color: #64748b;
+}
+
+/* Educational Content Section */
+.education-section {
+  margin-top: 24px;
+}
+
+.education-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.education-card {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.education-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+
+.education-card-content {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+}
